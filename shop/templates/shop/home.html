@@ -1,0 +1,25 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h1>Products</h1>
+<div>
+    <h2>Categories</h2>
+    <ul>
+        <li><a href="{% url 'home' %}">All</a></li>
+        {% for category in categories %}
+            <li><a href="?category={{ category.id }}">{{ category.name }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+<div class="product-list">
+    {% for product in products %}
+        <div class="product-item">
+            <a href="{% url 'product_detail' product.id %}">
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" width="200">
+                <h3>{{ product.name }}</h3>
+                <p>${{ product.price }}</p>
+            </a>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

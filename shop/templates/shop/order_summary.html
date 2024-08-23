@@ -1,0 +1,29 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h1>Order Summary</h1>
+<p>Order ID: {{ order.id }}</p>
+<p>Order Date: {{ order.created_at }}</p>
+<p>Status: {{ order.status }}</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price at Purchase</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.price }}</td>
+                <td>${{ item.get_total_price }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h3>Total Amount: ${{ order.total_amount }}</h3>
+{% endblock %}

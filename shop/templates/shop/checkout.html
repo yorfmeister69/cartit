@@ -1,0 +1,30 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+<h1>Checkout</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in cart_items %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ item.product.price }}</td>
+                <td>${{ item.get_total_price }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h3>Total Amount: ${{ total }}</h3>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Place Order</button>
+</form>
+{% endblock %}
