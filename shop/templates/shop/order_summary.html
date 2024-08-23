@@ -1,29 +1,66 @@
 {% extends 'shop/base.html' %}
 
 {% block content %}
-<h1>Order Summary</h1>
-<p>Order ID: {{ order.id }}</p>
-<p>Order Date: {{ order.created_at }}</p>
-<p>Status: {{ order.status }}</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price at Purchase</th>
-            <th>Total</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for item in order.items.all %}
-            <tr>
-                <td>{{ item.product.name }}</td>
-                <td>{{ item.quantity }}</td>
-                <td>${{ item.price }}</td>
-                <td>${{ item.get_total_price }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<h3>Total Amount: ${{ order.total_amount }}</h3>
+<div class="container py-5" style="background-color: #f8f9fa; border-radius: 8px;">
+    <div class="card mb-4 shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Order Summary</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5>Order Details</h5>
+                    <p><strong>Order ID:</strong> {{ order.id }}</p>
+                    <p><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if order.status == 'Completed' %}
+                            <span class="badge bg-success">{{ order.status }}</span>
+                        {% elif order.status == 'Processing' %}
+                            <span class="badge bg-warning text-dark">{{ order.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ order.status }}</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h5>Customer Information</h5>
+                    <p><strong>Name:</strong> {{ order.user.username }}</p>
+                    <p><strong>Email:</strong> {{ order.user.email }}</p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price at Purchase</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                            <tr>
+                                <td>{{ item.product.name }}</td>
+                                <td>{{ item.quantity }}</td>
+                                <td>${{ item.price }}</td>
+                                <td>${{ item.get_total_price }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <p class="text-muted">Thank you for shopping with us!</p>
+                </div>
+                <div class="col-md-6 text-end">
+                    <h4>Total Amount Due: <span class="text-primary">${{ order.total_amount }}</span></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

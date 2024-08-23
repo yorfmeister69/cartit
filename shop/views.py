@@ -34,12 +34,22 @@ def logout_view(request):
     return redirect('home')
 
 def home_view(request):
-    categories = Category.objects.all()
+    search_query = request.GET.get('search', '')
+    category_id = request.GET.get('category', '')
+
     products = Product.objects.all()
-    category_id = request.GET.get('category')
+    categories = Category.objects.all()
+
+    if search_query:
+        products = products.filter(name__icontains=search_query)
+
     if category_id:
         products = products.filter(category_id=category_id)
-    return render(request, 'shop/home.html', {'products': products, 'categories': categories})
+
+    return render(request, 'shop/home.html', {
+        'products': products,
+        'categories': categories,
+    })
 
 def product_detail_view(request, product_id):
     product = Product.objects.get(id=product_id)
