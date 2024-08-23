@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegistrationForm, LoginForm
 from .models import Product, Category, CartItem, Order, OrderItem
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
 def register_view(request):
     if request.method == 'POST':
@@ -90,10 +91,16 @@ def remove_from_cart_view(request, cart_item_id):
 def checkout_view(request):
     cart_items = CartItem.objects.filter(user=request.user)
     if not cart_items.exists():
+        messages.error(request, "Your cart is empty.")
         return redirect('cart')
     
     total = sum(item.get_total_price() for item in cart_items)
     
+    for item in cart_items:
+        if item.quantity > item.product.stock:
+            messages.error(request, f"Sorry, only {item.product.stock} units of {item.product.name} are available.")
+            return redirect('cart')
+
     if request.method == 'POST':
         order = Order.objects.create(user=request.user, total_amount=total)
         for item in cart_items:
@@ -107,6 +114,7 @@ def checkout_view(request):
             item.product.stock -= item.quantity
             item.product.save()
         cart_items.delete()
+        messages.success(request, "Your order has been placed successfully!")
         return redirect('order_summary', order_id=order.id)
     
     return render(request, 'shop/checkout.html', {'cart_items': cart_items, 'total': total})
